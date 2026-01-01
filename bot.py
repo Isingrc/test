@@ -284,6 +284,7 @@ async def get_ai_response(user_id: int, user_message: str) -> str:
                 else:
                     return "❌ Ошибка API"
     except Exception as e:
+        logging.info(user_message)
         logging.error(f"Ошибка: {e}")
         return "❌ Ошибка соединения"
 
