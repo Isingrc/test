@@ -249,16 +249,10 @@ async def send_long_message(message: Message, text: str):
             await asyncio.sleep(0.5)
         await message.answer(part)
 
-
-async def handle_message(message:Message):
-    username = message.from_user.username
-    # username будет строкой, например, 'vasya_pupkin'
-    return username
-
 # === РАБОТА С AI ===
 async def get_ai_response(user_id: int, user_message: str) -> str:
     
-    logging.info(user_message, username)
+    logging.info(user_message,)
     """Получить ответ от AI с историей"""
     headers = {
         "Authorization": "Bearer openai"
