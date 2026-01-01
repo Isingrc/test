@@ -252,6 +252,8 @@ async def send_long_message(message: Message, text: str):
 
 # === РАБОТА С AI ===
 async def get_ai_response(user_id: int, user_message: str) -> str:
+    
+    logging.info(user_message)
     """Получить ответ от AI с историей"""
     headers = {
         "Authorization": "Bearer openai"
