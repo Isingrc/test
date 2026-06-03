@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HloptsevVPN — Свобода в сети</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0f1520;
+    --border: #1e2d42;
+    --accent: #00d4ff;
+    --accent2: #7b61ff;
+    --text: #e8f4ff;
+    --muted: #5a7a99;
+    --green: #00e87a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── Фоновая сетка ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Orb ── */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,212,255,0.12), transparent 70%);
+    top: -100px; left: -100px;
+    animation: orbFloat 12s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(123,97,255,0.10), transparent 70%);
+    bottom: 100px; right: -100px;
+    animation: orbFloat 15s ease-in-out infinite reverse;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0,0); }
+    50% { transform: translate(30px, 30px); }
+  }
+
+  /* ── Контент ── */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    background: rgba(8,12,16,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(30,45,66,0.5);
+  }
+  nav .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 160px 0 100px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Кнопки ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover {
+    background: #33ddff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.3);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .btn-tg {
+    background: #229ED9;
+    color: #fff;
+  }
+  .btn-tg:hover {
+    background: #1a8fc7;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(34,158,217,0.3);
+  }
+
+  /* ── Бесплатный пробник ── */
+  .free-trial {
+    margin: 0 0 100px;
+  }
+  .free-card {
+    background: linear-gradient(135deg, rgba(0,232,122,0.08), rgba(0,212,255,0.05));
+    border: 1px solid rgba(0,232,122,0.2);
+    border-radius: 24px;
+    padding: 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .free-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+  }
+  .free-tag {
+    display: inline-block;
+    background: var(--green);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .free-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .free-card p {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 32px;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* Форма получения пробника */
+  .trial-form {
+    display: flex;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .trial-form input {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .trial-form input::placeholder { color: var(--muted); }
+  .trial-form input:focus { border-color: var(--accent); }
+  .trial-note {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Статус получения ключа */
+  .trial-result {
+    display: none;
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(0,232,122,0.08);
+    border: 1px solid rgba(0,232,122,0.2);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--green);
+  }
+  .trial-result code {
+    display: block;
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text);
+    word-break: break-all;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .trial-result code:hover { background: rgba(0,0,0,0.5); }
+  .copy-hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  /* ── Зачем ── */
+  .why {
+    padding: 0 0 100px;
+  }
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .why h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    margin-bottom: 48px;
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-4px);
+  }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .feature h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .feature p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Тарифы ── */
+  .pricing {
+    padding: 0 0 100px;
+  }
+  .pricing h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .pricing-sub {
+    color: var(--muted);
+    margin-bottom: 48px;
+    font-size: 16px;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .plan {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .plan:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-4px);
+  }
+  .plan.popular {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(0,212,255,0.06), var(--surface));
+  }
+  .plan-badge {
+    position: absolute;
+    top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+  }
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .plan-price sup {
+    font-size: 20px;
+    vertical-align: super;
+    font-weight: 400;
+  }
+  .plan-period {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .plan-features {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 24px;
+  }
+  .plan-features li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-features li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── Как оплатить ── */
+  .how {
+    padding: 0 0 100px;
+  }
+  .how h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    margin-bottom: 48px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    position: relative;
+  }
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+  }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: rgba(0,212,255,0.15);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .step h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── CTA ── */
+  .cta {
+    padding: 0 0 100px;
+    text-align: center;
+  }
+  .cta-card {
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(123,97,255,0.06));
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 32px;
+    padding: 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .cta p {
+    color: var(--muted);
+    font-size: 17px;
+    margin-bottom: 40px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-btns {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  /* ── Адаптив ── */
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .free-card { padding: 32px 20px; }
+    .cta-card { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="wrap">
+    <div class="logo">Hloptcsev<span>VPN</span></div>
+    <div class="nav-links">
+      <a href="#free">Попробовать</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#how">Оплата</a>
+      <a href="https://t.me/hlopzinews" target="_blank">Канал</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge">Серверы онлайн · Россия</div>
+    <h1>Интернет без<br><span class="accent">ограничений</span></h1>
+    <p class="hero-sub">Быстрый VPN с серверами по всему миру. Telegram, Instagram, YouTube — всё работает стабильно.</p>
+    <div class="hero-btns">
+      <a href="#free" class="btn btn-primary">⚡ Попробовать бесплатно</a>
+      <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-tg">🤖 Открыть бот</a>
+    </div>
+  </div>
+</section>
+
+<!-- Бесплатный пробник -->
+<section class="free-trial" id="free">
+  <div class="wrap">
+    <div class="free-card">
+      <div class="free-tag">Бесплатно</div>
+      <h2>Попробуй 1 час без регистрации</h2>
+      <p>Введи свой Telegram ID и получи бесплатный ключ на 1 час — чтобы зайти в Telegram и убедиться что всё работает.</p>
+      <div class="trial-form">
+        <input type="text" id="tgid-input" placeholder="Твой Telegram ID" maxlength="20">
+        <button class="btn btn-primary" onclick="getTrial()">Получить ключ</button>
+      </div>
+      <p class="trial-note">Узнать свой ID: напиши <a href="https://t.me/userinfobot" target="_blank" style="color:var(--accent)">@userinfobot</a></p>
+      <div class="trial-result" id="trial-result">
+        ✅ Ваш бесплатный ключ на 1 час:
+        <code id="trial-key" onclick="copyKey()">—</code>
+        <div class="copy-hint">Нажмите на ключ чтобы скопировать</div>
+        <div style="margin-top:16px; font-size:13px; color:var(--muted)">
+          Вставьте ссылку в любой VPN клиент:<br>
+          <strong style="color:var(--text)">iOS:</strong> Streisand, Shadowrocket, Karing &nbsp;·&nbsp;
+          <strong style="color:var(--text)">Android:</strong> v2rayNG, NekoBox &nbsp;·&nbsp;
+          <strong style="color:var(--text)">PC:</strong> v2rayN, Karing
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Зачем -->
+<section class="why">
+  <div class="wrap">
+    <div class="section-label">Преимущества</div>
+    <h2>Почему Hloptcsev</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Быстрые серверы</h3>
+        <p>Серверы автоматически сортируются по скорости. Подключение к лучшему за доли секунды.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌍</div>
+        <h3>Все сайты и сервисы</h3>
+        <p>Telegram, Instagram, YouTube, Spotify и любые другие заблокированные сервисы — всё работает.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>Любой клиент</h3>
+        <p>Одна ссылка подписки работает в Happ, v2rayN, Karing, NekoBox, Shadowrocket и других.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <h3>Автообновление</h3>
+        <p>Серверы обновляются каждые 2 часа. Если один не работает — клиент автоматически переключится.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🛡️</div>
+        <h3>Белые и чёрные списки</h3>
+        <p>Российские сайты открываются напрямую, зарубежные — через VPN. Скорость не теряется.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <h3>Поддержка в Telegram</h3>
+        <p>Поможем с настройкой в нашем канале. Отвечаем быстро.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Тарифы -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="section-label">Тарифы</div>
+    <h2>Простые цены</h2>
+    <p class="pricing-sub">Оплата через Telegram бот — крипта или перевод</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">1 месяц</div>
+        <div class="plan-price"><sup>₽</sup>49</div>
+        <div class="plan-period">в месяц</div>
+        <ul class="plan-features">
+          <li>Все серверы</li>
+          <li>Без ограничений</li>
+          <li>Автообновление</li>
+        </ul>
+        <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center">Выбрать</a>
+      </div>
+      <div class="plan popular">
+        <div class="plan-badge">Популярный</div>
+        <div class="plan-name">3 месяца</div>
+        <div class="plan-price"><sup>₽</sup>139</div>
+        <div class="plan-period">~46₽ в месяц</div>
+        <ul class="plan-features">
+          <li>Все серверы</li>
+          <li>Без ограничений</li>
+          <li>Автообновление</li>
+        </ul>
+        <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center">Выбрать</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">6 месяцев</div>
+        <div class="plan-price"><sup>₽</sup>299</div>
+        <div class="plan-period">~50₽ в месяц</div>
+        <ul class="plan-features">
+          <li>Все серверы</li>
+          <li>Без ограничений</li>
+          <li>Автообновление</li>
+        </ul>
+        <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center">Выбрать</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">1 год</div>
+        <div class="plan-price"><sup>₽</sup>500</div>
+        <div class="plan-period">~42₽ в месяц</div>
+        <ul class="plan-features">
+          <li>Все серверы</li>
+          <li>Без ограничений</li>
+          <li>Автообновление</li>
+        </ul>
+        <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center">Выбрать</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Как оплатить -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="section-label">Оплата</div>
+    <h2>Как подключиться</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Открой бот</h3>
+        <p>Перейди в Telegram бот и нажми <strong>Подключиться</strong>.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Выбери тариф</h3>
+        <p>Выбери удобный срок — от 1 месяца до года.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Оплати</h3>
+        <p>Переводом на карту менеджеру или криптой через CryptoBot — USDT.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Готово</h3>
+        <p>Получи ссылку подписки и вставь в любой VPN клиент. Работает сразу.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="wrap">
+    <div class="cta-card">
+      <h2>Готов попробовать?</h2>
+      <p>1 час бесплатно прямо сейчас — без регистрации</p>
+      <div class="cta-btns">
+        <a href="#free" class="btn btn-primary">⚡ Попробовать бесплатно</a>
+        <a href="https://t.me/hlopzinews" target="_blank" class="btn btn-tg">📢 Наш канал</a>
+        <a href="https://t.me/@cHeRn123_bot" target="_blank" class="btn btn-outline">🤖 Открыть бот</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <p>© 2025 HloptsevVPN · <a href="https://t.me/hlopzinews">Telegram канал</a> · <a href="https://t.me/@cHeRn123_bot">Бот</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Бесплатный пробник ────────────────────────────────────────────
+// Хранилище выданных пробников (в реальности должно быть на сервере)
+// Здесь используем localStorage как временное решение на фронте
+// Настоящую проверку делает Worker
+
+const WORKER_URL = "https://vpn-sub.vladosnasoq.workers.dev/sub";
+const TRIAL_HOURS = 1;
+
+function getTrial() {
+  const input = document.getElementById('tgid-input');
+  const tgid = input.value.trim();
+
+  if (!tgid || !/^\d{5,12}$/.test(tgid)) {
+    input.style.borderColor = '#ff4444';
+    input.placeholder = 'Введите числовой ID';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.placeholder = 'Твой Telegram ID';
+    }, 2000);
+    return;
+  }
+
+  // Проверяем не брал ли уже пробник этот ID
+  const used = JSON.parse(localStorage.getItem('trial_used') || '{}');
+  if (used[tgid]) {
+    const result = document.getElementById('trial-result');
+    result.style.display = 'block';
+    result.style.background = 'rgba(255,68,68,0.08)';
+    result.style.borderColor = 'rgba(255,68,68,0.2)';
+    result.style.color = '#ff6666';
+    result.innerHTML = '❌ Этот ID уже использовал бесплатный пробник.<br><a href="https://t.me/@cHeRn123_bot" style="color:var(--accent)">Перейти в бот для покупки →</a>';
+    return;
+  }
+
+  const btn = document.querySelector('.trial-form .btn');
+  btn.textContent = 'Получаем...';
+  btn.style.opacity = '0.7';
+
+  // Запрос к боту через Telegram Bot API для выдачи пробного ключа
+  // В реальности здесь должен быть запрос к вашему Worker или боту
+  // Пока показываем инструкцию перейти в бот
+  setTimeout(() => {
+    btn.textContent = 'Получить ключ';
+    btn.style.opacity = '1';
+
+    // Сохраняем что пробник выдан
+    used[tgid] = Date.now();
+    localStorage.setItem('trial_used', JSON.stringify(used));
+
+    const result = document.getElementById('trial-result');
+    result.style.display = 'block';
+    result.style.background = '';
+    result.style.borderColor = '';
+    result.style.color = '';
+    result.innerHTML = `
+      ✅ Отлично! Для получения бесплатного ключа на 1 час:<br><br>
+      <a href="https://t.me/@cHeRn123_bot?start=trial_${tgid}"
+         target="_blank"
+         class="btn btn-tg"
+         style="display:inline-flex;margin-top:8px">
+        🤖 Получить ключ в боте →
+      </a>
+      <div style="margin-top:16px;font-size:13px;color:var(--muted)">
+        Нажмите кнопку — бот автоматически выдаст ключ на 1 час
+      </div>
+    `;
+  }, 800);
+}
+
+function copyKey() {
+  const key = document.getElementById('trial-key').textContent;
+  if (key === '—') return;
+  navigator.clipboard.writeText(key).then(() => {
+    const hint = document.querySelector('.copy-hint');
+    hint.textContent = '✓ Скопировано!';
+    hint.style.color = 'var(--green)';
+    setTimeout(() => {
+      hint.textContent = 'Нажмите на ключ чтобы скопировать';
+      hint.style.color = '';
+    }, 2000);
+  });
+}
+
+// Enter в поле = получить ключ
+document.getElementById('tgid-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') getTrial();
+});
+
+// ── Плавное появление секций ──────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature, .plan, .step').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
